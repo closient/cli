@@ -45,9 +45,9 @@ archives for manual download:
 ## Update
 
 ```sh
-closient update           # download, verify and install the latest release
-closient update --check   # only report whether a newer release exists
-brew upgrade closient     # if you installed with Homebrew
+closient update                     # download, verify and install the latest release
+closient update --check             # only report whether a newer release exists
+brew upgrade closient/tap/closient  # if you installed with Homebrew
 ```
 
 `closient update` defers to Homebrew when Homebrew installed it. The CLI
