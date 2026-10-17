@@ -18,13 +18,13 @@ brew install closient/tap/closient
 macOS or Linux, without Homebrew (installs to `~/.local/bin`, no sudo):
 
 ```sh
-curl -fsSL https://www.closient.com/cli/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/closient/cli/main/install.sh | sh
 ```
 
 Windows (PowerShell, installs to `%LOCALAPPDATA%\Programs\closient`):
 
 ```powershell
-irm https://www.closient.com/cli/install.ps1 | iex
+irm https://raw.githubusercontent.com/closient/cli/main/install.ps1 | iex
 ```
 
 Both scripts verify the download against the release's `SHA256SUMS` and

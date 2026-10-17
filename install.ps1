@@ -1,6 +1,6 @@
 # Install the closient CLI on Windows.
 #
-#   irm https://www.closient.com/cli/install.ps1 | iex
+#   irm https://raw.githubusercontent.com/closient/cli/main/install.ps1 | iex
 #
 # Downloads the latest release from https://github.com/closient/cli, verifies
 # it against the release's SHA256SUMS, and installs closient.exe to
@@ -55,13 +55,28 @@ function Install-Closient {
 
         New-Item -ItemType Directory -Force -Path $installDir | Out-Null
         $destination = Join-Path $installDir 'closient.exe'
-        # A running closient.exe cannot be overwritten, but it can be renamed.
-        if (Test-Path $destination) {
-            $aside = "$destination.old"
-            Remove-Item -Force $aside -ErrorAction SilentlyContinue
-            Move-Item -Force $destination $aside
+        # Copy beside the destination first, so a failed copy touches nothing.
+        # A running closient.exe cannot be overwritten, but it can be renamed:
+        # move it aside, then rename the new one into place, and put the old
+        # one back if that fails.
+        $staged = "$destination.new"
+        Copy-Item -Force $binary $staged
+        $aside = $null
+        try {
+            if (Test-Path $destination) {
+                $aside = "$destination.old"
+                Remove-Item -Force $aside -ErrorAction SilentlyContinue
+                Move-Item -Force $destination $aside
+            }
+            Move-Item -Force $staged $destination
         }
-        Copy-Item $binary $destination
+        catch {
+            if ($aside -and -not (Test-Path $destination)) { Move-Item -Force $aside $destination }
+            throw
+        }
+        finally {
+            Remove-Item -Force $staged -ErrorAction SilentlyContinue
+        }
         Write-Host "closient-install: installed closient $resolved to $destination"
 
         $userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
